@@ -8,7 +8,10 @@ describe_shared "LazyData::Array" do
 
   def make_new_yielding(*items)
     a = make_new
-    a.stubs(:each).multiple_yields(*items) unless items.empty?
+    # stubbing with Mocha's multiple_yields fails under JRuby in some weird interaction
+    # with JRuby's Enumerable that I couldn't quite pin down. So doing it this way for now:
+    def a.each(&b); @_items.each(&b); end
+    a.instance_variable_set(:@_items, items)
     a
   end
 
