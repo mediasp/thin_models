@@ -1,4 +1,4 @@
-require 'lazy-data/struct'
+require 'lazy_data/struct'
 
 describe "LazyData::Struct" do
   def setup

@@ -1,5 +1,5 @@
 require 'test/helpers'
-require 'lazy-data/array'
+require 'lazy_data/array'
 
 describe_shared "LazyData::Array" do
   def make_new

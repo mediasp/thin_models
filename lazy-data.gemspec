@@ -2,7 +2,7 @@
 lib = File.expand_path('../lib/', __FILE__)
 $:.unshift lib unless $:.include?(lib)
 
-require 'lazy-data/version'
+require 'lazy_data/version'
 
 spec = Gem::Specification.new do |s|
   s.name   = "lazy-data"

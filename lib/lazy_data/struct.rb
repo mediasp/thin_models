@@ -1,4 +1,4 @@
-require 'lazy-data/errors'
+require 'lazy_data/errors'
 require 'set'
 
 module LazyData

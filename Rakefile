@@ -1,4 +1,4 @@
-require 'lib/lazy-data/version'
+require 'lib/lazy_data/version'
 
 desc 'build a gem release and push it to dev'
 task :release do
