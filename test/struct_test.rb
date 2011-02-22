@@ -49,10 +49,19 @@ describe "LazyData::Struct" do
     assert_equal 'bye', instance.bar
   end
 
-  it "should raise PartialDataError if an attribute's value is not loaded and can't be lazily loaded, rather than silently return nil" do
+  it "should raise PartialDataError for an attribute method, if an attribute's value is not loaded and can't be lazily loaded, rather than silently return nil" do
     assert_raise(LazyData::PartialDataError) {@klass.new.foo}
-    assert_raise(LazyData::PartialDataError) {@klass.new[:foo]}
   end
+
+  it "should raise PartialDataError for a call to fetch, if an attribute's value is not loaded and can't be lazily loaded, rather than silently return nil" do
+    assert_raise(LazyData::PartialDataError) {@klass.new.fetch(:foo)}
+  end
+
+  it "should return nil for a call to [], if an attribute's value is not loaded and can't be lazily loaded" do
+    assert_nil @klass.new[:foo]
+  end
+
+
 
   it "should dup and clone safely" do
     instance = @klass.new(:foo => 123)

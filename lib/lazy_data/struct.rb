@@ -66,6 +66,17 @@ module LazyData
         raise NameError, "no attribute #{attribute} in #{self.class}" unless self.class.attributes.include?(attribute)
         if @lazy_values
           @values[attribute] = @lazy_values.call(self, attribute)
+        end
+      end
+    end
+
+    def fetch(attribute)
+      if @values.has_key?(attribute)
+        @values[attribute]
+      else
+        raise NameError, "no attribute #{attribute} in #{self.class}" unless self.class.attributes.include?(attribute)
+        if @lazy_values
+          @values[attribute] = @lazy_values.call(self, attribute)
         else
           raise PartialDataError, "attribute #{attribute} not loaded"
         end
@@ -75,7 +86,7 @@ module LazyData
     # modifying the struct makes it stop any further lazy loading and forget about its lazy_values.
     # since it only really makes sense to me for an immutable object to be lazily loaded, potential for state bugs otherwise
     def []=(attribute, value)
-      raise NameError, "no attribute #{attribute} in #{self.class}" unless self.class.attributes.include?(attribute)
+      raise NameError, "no attribute #{attribute.inspect} in #{self.class}" unless self.class.attributes.include?(attribute)
       remove_lazy_values
       @values[attribute] = value
     end
@@ -86,7 +97,7 @@ module LazyData
 
     def merge!(updated_values)
       updated_values.to_hash.each_key do |attribute|
-        raise NameError, "no attribute #{attribute} in #{self.class}" unless attributes.include?(attribute)
+        raise NameError, "no attribute #{attribute.inspect} in #{self.class}" unless attributes.include?(attribute)
       end
       remove_lazy_values
       @values.merge!(updated_values)
@@ -95,6 +106,16 @@ module LazyData
 
     def inspect
       super.sub(/@lazy_values=#<Proc:.*?>/, 'lazy')
+    end
+
+    def to_json(*p)
+      @values.merge(:json_class => self.class).to_json(*p)
+    end
+
+    def self.json_create(json_values)
+      values = {}
+      attributes.each {|a| values[a] = json_values[a.to_s] if json_values.has_key?(a.to_s)}
+      new(values)
     end
 
 
