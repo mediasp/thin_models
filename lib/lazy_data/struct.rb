@@ -27,16 +27,17 @@ module LazyData
       @values.freeze
     end
 
-    def loaded_attributes
+    def loaded_values
       @values.dup
     end
 
     # This helps these structs work with ruby methods, like merge, which expect a Hash.
-    alias :to_hash :loaded_attributes
+    alias :to_hash :loaded_values
 
     def attribute_loaded?(attribute)
       @values.has_key?(attribute)
     end
+    alias :has_key? :attribute_loaded?
 
     attr_accessor :lazy_values
     private :lazy_values=
@@ -52,6 +53,11 @@ module LazyData
     def attributes
       self.class.attributes
     end
+
+    def loaded_attributes
+      @values.keys
+    end
+    alias :keys :loaded_attributes
 
     def [](attribute)
       if @values.has_key?(attribute)
