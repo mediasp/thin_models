@@ -12,6 +12,7 @@ spec = Gem::Specification.new do |s|
   s.email = ["matthew@playlouder.com"]
   s.summary = "Help exposing data objects with array- or struct-like interfaces which are lazily evaluated at various levels of granularity"
 
+  s.add_development_dependency('rake')
   s.add_development_dependency('test-spec')
   s.add_development_dependency('mocha')
 
