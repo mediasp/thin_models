@@ -1,3 +1,3 @@
-module LazyData
+module ThinModels
   VERSION = "0.1.0"
 end

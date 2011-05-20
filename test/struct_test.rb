@@ -1,13 +1,13 @@
-require 'lazy_data/struct'
+require 'thin_models/struct'
 
-describe "LazyData::Struct" do
+describe "ThinModels::Struct" do
   def setup
-    @klass = LazyData::Struct(:foo, :bar)
+    @klass = ThinModels::Struct(:foo, :bar)
   end
 
   describe "with an identity attribute" do
     def setup
-      @klass = LazyData::StructWithIdentity(:foo, :bar)
+      @klass = ThinModels::StructWithIdentity(:foo, :bar)
     end
 
     it 'should allow id to be supplied on creation and fetched via an attribute reader or struct[:id]' do
@@ -50,11 +50,11 @@ describe "LazyData::Struct" do
   end
 
   it "should raise PartialDataError for an attribute method, if an attribute's value is not loaded and can't be lazily loaded, rather than silently return nil" do
-    assert_raise(LazyData::PartialDataError) {@klass.new.foo}
+    assert_raise(ThinModels::PartialDataError) {@klass.new.foo}
   end
 
   it "should raise PartialDataError for a call to fetch, if an attribute's value is not loaded and can't be lazily loaded, rather than silently return nil" do
-    assert_raise(LazyData::PartialDataError) {@klass.new.fetch(:foo)}
+    assert_raise(ThinModels::PartialDataError) {@klass.new.fetch(:foo)}
   end
 
   it "should return nil for a call to [], if an attribute's value is not loaded and can't be lazily loaded" do
@@ -93,7 +93,7 @@ describe "LazyData::Struct" do
     assert_equal 123, new_instance.foo
   end
 
-  it "should merge with another LazyData::Struct, merging in only loaded attributes" do
+  it "should merge with another ThinModels::Struct, merging in only loaded attributes" do
     instance = @klass.new(:foo => 123, :bar => 789)
     new_instance = instance.merge(@klass.new(:bar => 456))
     assert_not_equal 456, instance.bar
@@ -152,7 +152,7 @@ describe "LazyData::Struct" do
       assert instance.has_lazy_values?
       instance.remove_lazy_values
       assert !instance.has_lazy_values?
-      assert_raise(LazyData::PartialDataError) {instance.foo}
+      assert_raise(ThinModels::PartialDataError) {instance.foo}
     end
 
     it "should stop any further lazy loading and forget about its lazy_values once you modify the object, since it only really makes sense to me for an immutable object to be lazily loaded, potential for state bugs otherwise" do

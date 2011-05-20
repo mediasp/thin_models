@@ -1,4 +1,4 @@
-module LazyData
+module ThinModels
   # Exposes Enumerable and a subset of the interface of Array, but is lazily evaluated.
   #
   # The default constructor allows you to pass in an underlying Enumerable whose .each method will be
@@ -10,7 +10,7 @@ module LazyData
   # the array. This will be used to supply optimised versions of #[] / #slice
   #
   # Deliberately doesn't expose any mutation methods - is not intended to be a mutable data structure.
-  class Array
+  class LazyArray
     include Enumerable
 
     def initialize(enumerable=nil)
@@ -22,7 +22,7 @@ module LazyData
     end
 
     def inspect
-      "[LazyData::Array:...]"
+      "[ThinModels::LazyArray:...]"
     end
 
     # We recommend overriding this #length implementation (which is based on #each) with an efficient
@@ -93,13 +93,13 @@ module LazyData
       self[l-1] if l > 0
     end
 
-    # map works lazily, resulting in a LazyData::Array::Mapped or a LazyData::Array::Memoized::Mapped (which additionally
+    # map works lazily, resulting in a ThinModels::LazyArray::Mapped or a ThinModels::LazyArray::Memoized::Mapped (which additionally
     # memoizes the mapped values)
     def map(memoize=false, &b)
       (memoize ? Memoized::Mapped : Mapped).new(self, &b)
     end
 
-    class Mapped < LazyData::Array
+    class Mapped < ThinModels::LazyArray
       def initialize(underlying, &block)
         @underlying = underlying; @block = block
       end
@@ -123,7 +123,7 @@ module LazyData
     # as a result of a full iteration via #each (which uses an underlying #_each)
     #
     # Your extension points are now #_each, #_length and #slice_from_start_and_length
-    class MemoizedLength < LazyData::Array
+    class MemoizedLength < ThinModels::LazyArray
       def each
         length = 0
         _each {|item| yield item; length += 1}
@@ -138,9 +138,9 @@ module LazyData
 
       def inspect
         if @length
-          "[LazyData::Array(length=#{@length}):...]"
+          "[ThinModels::LazyArray(length=#{@length}):...]"
         else
-          "[LazyData::Array:...]"
+          "[ThinModels::LazyArray:...]"
         end
       end
     end
@@ -177,15 +177,15 @@ module LazyData
 
       def inspect
         if @to_ary
-          "[LazyData::Array: #{@to_ary.inspect[1..-1]}]"
+          "[ThinModels::LazyArray: #{@to_ary.inspect[1..-1]}]"
         elsif @length
-          "[LazyData::Array(length=#{@length}):...]"
+          "[ThinModels::LazyArray(length=#{@length}):...]"
         else
-          "[LazyData::Array:...]"
+          "[ThinModels::LazyArray:...]"
         end
       end
 
-      # For when you want to map to a LazyData::Array which memoizes the results of the map
+      # For when you want to map to a ThinModels::LazyArray which memoizes the results of the map
       class Mapped < Memoized
         def initialize(underlying, &block)
           @underlying = underlying; @block = block

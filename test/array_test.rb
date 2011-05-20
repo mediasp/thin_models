@@ -1,9 +1,9 @@
 require 'test/helpers'
-require 'lazy_data/array'
+require 'thin_models/lazy_array'
 
-describe_shared "LazyData::Array" do
+describe_shared "ThinModels::LazyArray" do
   def make_new
-    LazyData::Array.new
+    ThinModels::LazyArray.new
   end
 
   def make_new_yielding(*items)
@@ -79,7 +79,7 @@ describe_shared "LazyData::Array" do
       mapped.each {}
     end
 
-    it "should let you map to a memoized Array::Lazy with memoized = true" do
+    it "should let you map to a memoized LazyArray with memoized = true" do
       b = make_new
       b.expects(:each).once.multiple_yields(1,2,3)
       mapped = b.map(true) {|x| x+1}
@@ -90,8 +90,8 @@ describe_shared "LazyData::Array" do
   end
 end
 
-describe "LazyData::Array" do
-  behaves_like "LazyData::Array"
+describe "ThinModels::LazyArray" do
+  behaves_like "ThinModels::LazyArray"
 
   describe "with #length overridden", self do
     it "should not call #each, only the custom #length, when asking for length, count or size" do
@@ -105,8 +105,8 @@ describe "LazyData::Array" do
   end
 end
 
-describe_shared "LazyData::Array::MemoizedLength" do
-  behaves_like "LazyData::Array"
+describe_shared "ThinModels::LazyArray::MemoizedLength" do
+  behaves_like "ThinModels::LazyArray"
 
   def make_new_yielding(*items)
     a = make_new
@@ -137,19 +137,19 @@ describe_shared "LazyData::Array::MemoizedLength" do
   end
 end
 
-describe "LazyData::Array::MemoizedLength" do
-  behaves_like "LazyData::Array::MemoizedLength"
+describe "ThinModels::LazyArray::MemoizedLength" do
+  behaves_like "ThinModels::LazyArray::MemoizedLength"
 
   def make_new
-    LazyData::Array::MemoizedLength.new
+    ThinModels::LazyArray::MemoizedLength.new
   end
 end
 
-describe "LazyData::Array::Memoized" do
-  behaves_like "LazyData::Array::MemoizedLength"
+describe "ThinModels::LazyArray::Memoized" do
+  behaves_like "ThinModels::LazyArray::MemoizedLength"
 
   def make_new
-    LazyData::Array::Memoized.new
+    ThinModels::LazyArray::Memoized.new
   end
 
   it "should remember the elements yielded by the first call to each, never calling _each a second time" do

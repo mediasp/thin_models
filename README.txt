@@ -1,4 +1,4 @@
-LazyData
-========
+ThinModels
+==========
 
-Help exposing data objects with array- or struct-like interfaces which are lazily evaluated at various levels of granularity.
+Some convenience classes for 'thin models' -- pure domain model data objects which are devoid of persistence and other infrastructural concerns.

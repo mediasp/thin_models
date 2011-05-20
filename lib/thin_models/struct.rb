@@ -1,7 +1,7 @@
-require 'lazy_data/errors'
+require 'thin_models/errors'
 require 'set'
 
-module LazyData
+module ThinModels
 
   class Struct
     def initialize(values=nil, &lazy_values)
