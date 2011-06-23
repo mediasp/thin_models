@@ -184,38 +184,6 @@ module ThinModels
           EOS
         end
       end
-
-      # the identity attribute is not lazily-loaded, nor does it have a public setter.
-      # it does get registered as an attribute though.
-      def identity_attr
-        include IdentityMethods
-        attributes << :id
-      end
-    end
-
-    module IdentityMethods
-      def id
-        @values[:id]
-      end
-
-      def ==(other)
-        super || (other.is_a?(self.class) && (id = self.id) && other.id == id) || false
-      end
-
-      def hash
-        id ? id.hash : super
-      end
-
-      # this was: alias :eql? :==, but that ran into http://redmine.ruby-lang.org/issues/show/734
-      def eql?(other)
-        super || (other.is_a?(self.class) && (id = self.id) && other.id == id) || false
-      end
-
-    private
-
-      def id=(id)
-        @values[:id] = id
-      end
     end
   end
 
@@ -226,12 +194,4 @@ module ThinModels
       lazy_attr_accessor(*attributes)
     end
   end
-
-  def self.StructWithIdentity(*attributes)
-    Class.new(Struct) do
-      identity_attr
-      lazy_attr_accessor(*attributes)
-    end
-  end
-
 end
