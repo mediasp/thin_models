@@ -19,6 +19,7 @@ module ThinModels
     # ie use a dup'd properties hash instance for the dup, meaning it can
     # be updated without affecting the state of the original.
     def initialize_copy(other)
+      super
       @values = @values.dup
     end
 
@@ -104,9 +105,37 @@ module ThinModels
       self
     end
 
+    # Based on Matz's code for OpenStruct#inspect in the stdlib.
+    #
+    # Note the trick with the Thread-local :__inspect_key__, which ruby internals appear to
+    # use but  isn't documented anywhere. If you use it in the same way the stdlib uses it,
+    # you can override inspect without breaking its cycle avoidant behaviour
     def inspect
-      super.sub(/@lazy_values=#<Proc:.*?>/, 'lazy')
+      str = "#<#{self.class}"
+
+      ids = (Thread.current[:__inspect_key__] ||= [])
+      if ids.include?(object_id)
+        return str << ' ...>'
+      end
+
+      ids << object_id
+      begin
+        first = true
+        for k,v in @values
+          str << "," unless first
+          first = false
+          str << " #{k}=#{v.inspect}"
+        end
+        if @lazy_values
+          str << "," unless first
+          str << " ..."
+        end
+        return str << '>'
+      ensure
+        ids.pop
+      end
     end
+    alias :to_s :inspect
 
     def to_json(*p)
       @values.merge(:json_class => self.class).to_json(*p)

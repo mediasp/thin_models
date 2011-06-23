@@ -180,7 +180,24 @@ describe "ThinModels::Struct" do
       assert !instance.has_lazy_values?
       assert_equal 123, instance.foo
     end
-
   end
 
+  describe "#inspect" do
+    def setup
+      @klass = ThinModels::Struct(:foo, :bar)
+      class << @klass; def to_s; 'Foo'; end; end
+    end
+
+    it "should include a trailing, ... when there are unevaluated lazy values" do
+      instance = @klass.new(:foo => 'present') {|model,property| "lazy"}
+      assert_equal "#<Foo foo=\"present\", ...>", instance.inspect
+    end
+
+    it "should not overflow the stack when inspecting objects with cycles in their reference graph" do
+      instance = @klass.new
+      instance.foo = [instance]
+      assert_equal "#<Foo foo=[#<Foo ...>]>", instance.inspect
+      assert_equal "[#<Foo foo=[...]>]", instance.foo.inspect
+    end
+  end
 end
