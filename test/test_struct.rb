@@ -75,6 +75,10 @@ describe "ThinModels::Struct" do
     assert_raise(NameError) {@klass.new[:wtf]}
   end
 
+  it "should let you bypass checks in the constructor via skip_checks arg" do
+    assert @klass.new({:wtf => 123}, true)
+  end
+
   it "should know its attributes" do
     assert_equal Set.new([:foo, :bar]), @klass.attributes
     assert_equal Set.new([:foo, :bar]), @klass.new.attributes

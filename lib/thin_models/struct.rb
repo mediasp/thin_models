@@ -4,15 +4,17 @@ require 'set'
 module ThinModels
 
   class Struct
-    def initialize(values=nil, &lazy_values)
-      if values
-        attributes = self.class.attributes
-        values.each_key do |attribute|
-          raise NameError, "no attribute #{attribute} in #{self.class}" unless attributes.include?(attribute)
-        end
-      end
+    def initialize(values=nil, skip_checks=false, &lazy_values)
       @values = values || {}
       @lazy_values = lazy_values if lazy_values
+      check_attributes if values && !skip_checks
+    end
+
+    def check_attributes
+      attributes = self.class.attributes
+      @values.each_key do |attribute|
+        raise NameError, "no attribute #{attribute} in #{self.class}" unless attributes.include?(attribute)
+      end
     end
 
     # this allows 'dup' to work in a desirable way for these instances,
@@ -156,18 +158,12 @@ module ThinModels
         self.attributes << attribute
         class_eval <<-EOS, __FILE__, __LINE__+1
           def #{attribute}
-            if @values.has_key?(:#{attribute})
-              @values[:#{attribute}]
-            elsif @lazy_values
-              @values[:#{attribute}] = @lazy_values.call(self, :#{attribute})
-            else
-              raise PartialDataError, "attribute #{attribute} not loaded"
-            end
+            fetch(#{attribute.inspect})
           end
         EOS
         class_eval <<-EOS, __FILE__, __LINE__+1
           def #{attribute}=(value)
-            @values[:#{attribute}] = value
+            self[#{attribute.inspect}] = value
           end
         EOS
       end
