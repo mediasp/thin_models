@@ -84,11 +84,8 @@ module ThinModels
       end
     end
 
-    # modifying the struct makes it stop any further lazy loading and forget about its lazy_values.
-    # since it only really makes sense to me for an immutable object to be lazily loaded, potential for state bugs otherwise
     def []=(attribute, value)
       raise NameError, "no attribute #{attribute.inspect} in #{self.class}" unless self.class.attributes.include?(attribute)
-      remove_lazy_values
       @values[attribute] = value
     end
 
@@ -100,7 +97,6 @@ module ThinModels
       updated_values.to_hash.each_key do |attribute|
         raise NameError, "no attribute #{attribute.inspect} in #{self.class}" unless attributes.include?(attribute)
       end
-      remove_lazy_values
       @values.merge!(updated_values)
       self
     end
@@ -155,34 +151,25 @@ module ThinModels
 
       private
 
-      def lazy_attr_reader(*attributes)
-        attributes.each do |attribute|
-          raise "Attribute #{attribute} already defined on #{self}" if self.attributes.include?(attribute)
-          self.attributes << attribute
-          class_eval <<-EOS, __FILE__, __LINE__+1
-            def #{attribute}
-              if @values.has_key?(:#{attribute})
-                @values[:#{attribute}]
-              elsif @lazy_values
-                @values[:#{attribute}] = @lazy_values.call(self, :#{attribute})
-              else
-                raise PartialDataError, "attribute #{attribute} not loaded"
-              end
+      def attribute(attribute)
+        raise "Attribute #{attribute} already defined on #{self}" if self.attributes.include?(attribute)
+        self.attributes << attribute
+        class_eval <<-EOS, __FILE__, __LINE__+1
+          def #{attribute}
+            if @values.has_key?(:#{attribute})
+              @values[:#{attribute}]
+            elsif @lazy_values
+              @values[:#{attribute}] = @lazy_values.call(self, :#{attribute})
+            else
+              raise PartialDataError, "attribute #{attribute} not loaded"
             end
-          EOS
-        end
-      end
-
-      def lazy_attr_accessor(*attributes)
-        lazy_attr_reader(*attributes)
-        attributes.each do |attribute|
-          class_eval <<-EOS, __FILE__, __LINE__+1
-            def #{attribute}=(value)
-              remove_lazy_values
-              @values[:#{attribute}] = value
-            end
-          EOS
-        end
+          end
+        EOS
+        class_eval <<-EOS, __FILE__, __LINE__+1
+          def #{attribute}=(value)
+            @values[:#{attribute}] = value
+          end
+        EOS
       end
     end
   end
@@ -191,7 +178,7 @@ module ThinModels
 
   def self.Struct(*attributes)
     Class.new(Struct) do
-      lazy_attr_accessor(*attributes)
+      attributes.each {|a| attribute(a)}
     end
   end
 end

@@ -35,7 +35,7 @@ module ThinModels
   class Struct
     class << self
     private
-      def identity_attr
+      def identity_attribute
         include IdentityMethods
       end
     end
@@ -43,8 +43,8 @@ module ThinModels
 
   def self.StructWithIdentity(*attributes)
     Class.new(Struct) do
-      identity_attr
-      attributes.each {|a| lazy_attr_accessor(a)}
+      identity_attribute
+      attributes.each {|a| attribute(a)}
     end
   end
 end

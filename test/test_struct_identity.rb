@@ -1,3 +1,4 @@
+require 'test/helpers'
 require 'thin_models/struct/identity'
 
 describe "ThinModels::Struct::IdentityMethods" do

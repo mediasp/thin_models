@@ -1,3 +1,4 @@
+require 'test/helpers'
 require 'thin_models/struct'
 
 describe "ThinModels::Struct" do
@@ -120,32 +121,6 @@ describe "ThinModels::Struct" do
       instance.remove_lazy_values
       assert !instance.has_lazy_values?
       assert_raise(ThinModels::PartialDataError) {instance.foo}
-    end
-
-    it "should stop any further lazy loading and forget about its lazy_values once you modify the object, since it only really makes sense to me for an immutable object to be lazily loaded, potential for state bugs otherwise" do
-      instance = @klass.new do |attribute|
-        flunk "unexpected call to lazy loader block"
-      end
-      assert instance.has_lazy_values?
-      instance.foo = 123
-      assert !instance.has_lazy_values?
-      assert_equal 123, instance.foo
-
-      instance = @klass.new do |attribute|
-        flunk "unexpected call to lazy loader block"
-      end
-      assert instance.has_lazy_values?
-      instance[:foo] = 123
-      assert !instance.has_lazy_values?
-      assert_equal 123, instance.foo
-
-      instance = @klass.new do |attribute|
-        flunk "unexpected call to lazy loader block"
-      end
-      assert instance.has_lazy_values?
-      instance.merge!(:foo => 123)
-      assert !instance.has_lazy_values?
-      assert_equal 123, instance.foo
     end
   end
 
