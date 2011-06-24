@@ -32,4 +32,15 @@ describe "ThinModels::Struct::IdentityMethods" do
     assert_not_equal a, b
     assert_not_equal a, a.dup
   end
+
+  it "should let you use an identity_attribute named something other than :id, but providing id and id= aliases for it" do
+    @klass = Class.new(ThinModels::Struct) do
+      identity_attribute :foo
+    end
+    assert_equal @klass.new(:foo => 123), @klass.new(:foo => 123)
+    assert_equal 123, @klass.new(:foo => 123).id
+    i = @klass.new; i.id = 123
+    assert_equal(123, i.id)
+    assert_equal(123, i.foo)
+  end
 end

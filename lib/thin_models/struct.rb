@@ -178,3 +178,5 @@ module ThinModels
     end
   end
 end
+
+require 'thin_models/struct/identity'

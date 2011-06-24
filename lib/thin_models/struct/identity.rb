@@ -3,15 +3,6 @@ require 'thin_models/struct'
 module ThinModels
 
   module Struct::IdentityMethods
-    def self.included(klass)
-      raise "#{self} only applies to ThinModels::Struct subclasses" unless klass < Struct
-      klass.attributes << :id
-    end
-
-    def id
-      @values[:id]
-    end
-
     def ==(other)
       super || (other.is_a?(self.class) && (id = self.id) && other.id == id) || false
     end
@@ -24,18 +15,19 @@ module ThinModels
     def eql?(other)
       super || (other.is_a?(self.class) && (id = self.id) && other.id == id) || false
     end
-
-  private
-
-    def id=(id)
-      @values[:id] = id
-    end
   end
 
   class Struct
     class << self
     private
-      def identity_attribute
+      def identity_attribute(name=:id)
+        attribute(name) unless attributes.include?(name)
+        alias_method(:id=, "#{name}=") unless name == :id
+        class_eval <<-EOS, __FILE__, __LINE__+1
+          def id
+            @values[#{name.inspect}]
+          end
+        EOS
         include IdentityMethods
       end
     end
