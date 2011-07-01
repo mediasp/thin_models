@@ -9,7 +9,12 @@ class ThinModels::Struct::Typed < ThinModels::Struct
   include Typisch::Typed
 
   class << self
-    alias :define_typed_attribute :attribute
+    def type_available
+      type.property_names_to_types.map do |name, type|
+        attribute(name) unless attributes.include?(name)
+        alias_method(:"#{name}?", name) if type.excluding_null.is_a?(Typisch::Type::Boolean)
+      end
+    end
   end
 
   # this will only type-check non-lazy properties -- not much point
