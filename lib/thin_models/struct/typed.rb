@@ -11,7 +11,7 @@ class ThinModels::Struct::Typed < ThinModels::Struct
   class << self
     def type_available
       type.property_names_to_types.map do |name, type|
-        attribute(name) unless attributes.include?(name)
+        attribute(name) unless attributes.include?(name) || method_defined?(name)
         alias_method(:"#{name}?", name) if type.excluding_null.is_a?(Typisch::Type::Boolean)
       end
     end
