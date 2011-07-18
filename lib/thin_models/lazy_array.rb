@@ -34,6 +34,24 @@ module ThinModels
 
     def size; length; end
 
+    def empty?
+      each {return false}
+      return true
+    end
+
+    def join(separator=$,)
+      result = ''; first = true
+      each do |x|
+        if first
+          first = false
+        else
+          result << separator if separator
+        end
+        result << x.to_s
+      end
+      result
+    end
+
     # enables splat syntax: a, *b = lazy_array; foo(*lazy_array) etc.
     alias :to_ary :to_a
 

@@ -49,6 +49,25 @@ describe_shared "ThinModels::LazyArray" do
     assert_equal ['b','c'], tail
   end
 
+  it "should quack like an Array for #empty?" do
+    @a = make_new_yielding('a','b','c')
+    assert !@a.empty?
+    @a = make_new_yielding()
+    assert @a.empty?
+  end
+
+  it "should quack like an Array for #join" do
+    @a = make_new_yielding('a','b','c')
+    assert_equal 'abc', @a.join
+    assert_equal 'a,b,c', @a.join(',')
+    @a = make_new_yielding()
+    assert_equal '', @a.join
+    assert_equal '', @a.join(',')
+    @a = make_new_yielding('a')
+    assert_equal 'a', @a.join
+    assert_equal 'a', @a.join(',')
+  end
+
   describe "with #slice_from_start_and_length overridden", self do
     it "should not call #each, only the custom #slice_from_start_and_length, when calling #[] / #slice" do
       @a = make_new_yielding('a','b','c')
