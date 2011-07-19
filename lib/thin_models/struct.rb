@@ -4,6 +4,10 @@ require 'set'
 module ThinModels
 
   class Struct
+    def self.new_skipping_checks(values, &lazy_values)
+      new(values, true, &lazy_values)
+    end
+
     def initialize(values=nil, skip_checks=false, &lazy_values)
       @values = values || {}
       @lazy_values = lazy_values if lazy_values
