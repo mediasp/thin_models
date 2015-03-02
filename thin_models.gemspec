@@ -15,7 +15,7 @@ spec = Gem::Specification.new do |s|
   s.add_development_dependency('rake')
   s.add_development_dependency('test-spec')
   s.add_development_dependency('mocha')
-  s.add_development_dependency('autotest')
+  # s.add_development_dependency('autotest')
   s.add_development_dependency('typisch', '~> 0.1.4')
 
   s.files = Dir.glob("{lib}/**/*") + ['README.txt']

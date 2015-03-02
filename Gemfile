@@ -1,2 +1,2 @@
-source(ENV['BUNDLER_OVERRIDE_SOURCE'] || :rubygems)
+source 'https://rubygems.org'
 gemspec

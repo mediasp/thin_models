@@ -15,9 +15,14 @@ module ThinModels
     end
 
     def check_attributes
-      attributes = self.class.attributes
       @values.each_key do |attribute|
-        raise NameError, "no attribute #{attribute} in #{self.class}" unless attributes.include?(attribute)
+        check_attribute(attribute)
+      end
+    end
+
+    def check_attribute(attribute)
+      unless self.class.attributes.include?(attribute)
+        fail NameError, "no attribute #{attribute} in #{self.class}"
       end
     end
 
@@ -70,7 +75,7 @@ module ThinModels
       if @values.has_key?(attribute)
         @values[attribute]
       else
-        raise NameError, "no attribute #{attribute} in #{self.class}" unless self.class.attributes.include?(attribute)
+        check_attribute(attribute)
         if @lazy_values
           @values[attribute] = @lazy_values.call(self, attribute)
         end
@@ -81,7 +86,7 @@ module ThinModels
       if @values.has_key?(attribute)
         @values[attribute]
       else
-        raise NameError, "no attribute #{attribute} in #{self.class}" unless self.class.attributes.include?(attribute)
+        check_attribute(attribute)
         if @lazy_values
           @values[attribute] = @lazy_values.call(self, attribute)
         else
@@ -91,7 +96,7 @@ module ThinModels
     end
 
     def []=(attribute, value)
-      raise NameError, "no attribute #{attribute.inspect} in #{self.class}" unless self.class.attributes.include?(attribute)
+      check_attribute(attribute)
       @values[attribute] = value
     end
 
@@ -101,7 +106,7 @@ module ThinModels
 
     def merge!(updated_values)
       updated_values.to_hash.each_key do |attribute|
-        raise NameError, "no attribute #{attribute.inspect} in #{self.class}" unless attributes.include?(attribute)
+        check_attribute(attribute)
       end
       @values.merge!(updated_values)
       self
