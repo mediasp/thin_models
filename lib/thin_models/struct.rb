@@ -73,7 +73,8 @@ module ThinModels
     alias :keys :loaded_attributes
 
     def [](attribute)
-      attribute = attribute.to_sym if check_attribute(attribute)
+      check_attribute(attribute)
+      attribute = attribute.to_sym
       if @values.has_key?(attribute.to_sym)
         @values[attribute.to_sym]
       else
@@ -84,7 +85,8 @@ module ThinModels
     end
 
     def fetch(attribute)
-      attribute = attribute.to_sym if check_attribute(attribute)
+      check_attribute(attribute)
+      attribute = attribute.to_sym
       if @values.has_key?(attribute)
         @values[attribute]
       else
@@ -98,6 +100,7 @@ module ThinModels
 
     def []=(attribute, value)
       check_attribute(attribute)
+      attribute = attribute.to_sym
       @values[attribute] = value
     end
 

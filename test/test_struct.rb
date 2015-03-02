@@ -16,6 +16,8 @@ describe "ThinModels::Struct" do
     assert_equal 'byez', instance[:bar]
     instance[:bar] = 'bye'
     assert_equal 'bye', instance.bar
+    instance['bar'] = 'bar'
+    assert_equal 'bar', instance.bar
   end
 
   it "should raise PartialDataError for an attribute method, if an attribute's value is not loaded and can't be lazily loaded, rather than silently return nil" do
