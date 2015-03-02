@@ -21,7 +21,8 @@ module ThinModels
     end
 
     def check_attribute(attribute)
-      unless self.class.attributes.include?(attribute)
+      attributes = self.class.attributes.map(&:to_s)
+      unless attributes.include?(attribute.to_s)
         fail NameError, "no attribute #{attribute} in #{self.class}"
       end
     end
@@ -72,10 +73,10 @@ module ThinModels
     alias :keys :loaded_attributes
 
     def [](attribute)
-      if @values.has_key?(attribute)
-        @values[attribute]
+      attribute = attribute.to_sym if check_attribute(attribute)
+      if @values.has_key?(attribute.to_sym)
+        @values[attribute.to_sym]
       else
-        check_attribute(attribute)
         if @lazy_values
           @values[attribute] = @lazy_values.call(self, attribute)
         end
@@ -83,10 +84,10 @@ module ThinModels
     end
 
     def fetch(attribute)
+      attribute = attribute.to_sym if check_attribute(attribute)
       if @values.has_key?(attribute)
         @values[attribute]
       else
-        check_attribute(attribute)
         if @lazy_values
           @values[attribute] = @lazy_values.call(self, attribute)
         else

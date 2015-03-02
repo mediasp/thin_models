@@ -11,6 +11,7 @@ describe "ThinModels::Struct" do
 
     assert_equal "hi", instance.foo
     assert_equal "hi", instance[:foo]
+    assert_equal "hi", instance['foo']
     instance.bar = 'byez'
     assert_equal 'byez', instance[:bar]
     instance[:bar] = 'bye'
@@ -28,8 +29,6 @@ describe "ThinModels::Struct" do
   it "should return nil for a call to [], if an attribute's value is not loaded and can't be lazily loaded" do
     assert_nil @klass.new[:foo]
   end
-
-
 
   it "should dup and clone safely" do
     instance = @klass.new(:foo => 123)
