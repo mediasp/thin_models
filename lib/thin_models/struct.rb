@@ -9,7 +9,7 @@ module ThinModels
     end
 
     def initialize(values=nil, skip_checks=false, &lazy_values)
-      @values = values || {}
+      @values = (values || {}).reduce({}) { |m, (k, v)| m[k.to_sym] = v; m }
       @lazy_values = lazy_values if lazy_values
       check_attributes if values && !skip_checks
     end

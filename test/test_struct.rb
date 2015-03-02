@@ -20,6 +20,12 @@ describe "ThinModels::Struct" do
     assert_equal 'bar', instance.bar
   end
 
+  it 'should allow me to create a struct with string indexes' do
+    instance = @klass.new('foo' => 'hi')
+
+    assert_equal 'hi', instance.foo
+  end
+
   it "should raise PartialDataError for an attribute method, if an attribute's value is not loaded and can't be lazily loaded, rather than silently return nil" do
     assert_raise(ThinModels::PartialDataError) {@klass.new.foo}
   end
