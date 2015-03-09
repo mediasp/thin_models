@@ -51,6 +51,7 @@ module ThinModels
       @values.has_key?(attribute)
     end
     alias :has_key? :attribute_loaded?
+    alias :key? :attribute_loaded?
 
     attr_accessor :lazy_values
     private :lazy_values=
